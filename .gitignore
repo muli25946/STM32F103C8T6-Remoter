@@ -1,0 +1,15 @@
+/build
+/cmake
+/CMakeFiles
+/Drivers
+/.clangd
+/.mxproject
+/build.ninja
+/CMakeCache.txt
+/cmake_install.cmake
+/CMakePresets.json
+/compile_commands.json
+/FC_Remotor.code-workspace
+/startup_stm32f103xb.s
+/stm32f103c8tx_flash.ld
+/.vscode

@@ -1,0 +1,67 @@
+graph TD
+
+subgraph 物理世界
+    subgraph 摇杆
+        joystick
+    end
+    subgraph 显示设备
+        oled
+    end
+    subgraph 按键
+        key
+    end 
+    subgraph nrf24l01
+        Tx
+        Rx 
+        irq
+    end
+end
+
+subgraph 数据结构
+    subgraph 摇杆数据
+        JoystickData_t
+    end
+    subgraph 发送数据
+        NrfTxData_t
+    end
+    subgraph 显示数据
+        OledShowData_t
+    end
+end
+
+subgraph 任务
+    subgraph 摇杆读取任务
+        xJoyTask(xJoystickTask)
+    end
+    subgraph NRF发送任务
+        xNrfTxTask(xNrfTxTask)
+    end
+    subgraph NRF接收任务
+        xNrfRxTask(xNrfRxTask)
+    end
+    subgraph OLED显示任务
+        xOledTask(xOledTask)
+    end
+    subgraph 按键处理任务
+        xKeyTask(xKeyHandlerTask)
+    end
+    subgraph 应用逻辑任务
+        xAppTask(xAppLogicTask)
+    end
+end
+
+subgraph 中断
+    gpio_exti
+    nrf24_irq
+end
+
+%% 数据流
+
+joystick -->|dma传输|xJoyTask -->|解码存入|JoystickData_t
+JoystickData_t -->|读取|xKeyTask
+NrfTxData_t -->|读取|xNrfTxTask -->|调用|Tx
+xKeyTask -->|修改|NrfTxData_t & OledShowData_t
+JoystickData_t -->|复制|NrfTxData_t -->|复制|OledShowData_t
+OledShowData_t -->|读取|xOledTask -->|调用|oled
+
+key -->|触发|gpio_exti -->|状态机通知|xKeyTask
